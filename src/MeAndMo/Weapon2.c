@@ -29,7 +29,7 @@
 /*    CONSTANTS             */
 /****************************/
 
-#define	ROCK_POWER	2					// does .. damage to enemy
+#define	ROCK_POWER	10					// does .. damage to enemy
 
 #define	TRACER_DURATION		(GAME_FPS)
 #define	TRACER_POWER 		4
