@@ -34,7 +34,6 @@
 #define	TRACER_DURATION		(GAME_FPS)
 #define	TRACER_POWER 		4
 
-
 #define	FLAMETHROWER_DURATION 	(GAME_FPS/4)
 #define	FLAMETHROWER_POWER 		6
 
@@ -70,14 +69,16 @@ long	gLastPixieTime	= 0;
 
 #define	HeatSeekTarget	Ptr1
 
+// n, ne, e, se, s, sw, w, nw
+const double gThrowVectorsX[] = {0,0.707,1,0.707,0,-0.707,-1,-0.707};
+const double gThrowVectorsY[] = {-1,-0.7,0,0.707,0.9,0.707,0,-0.707};
+
+const long gGunVectorsX[] = {0,1,1,1,0,-1,-1,-1};
+const long gGunVectorsY[] = {-1,-1,0,1,1,1,0,-1};
+
 /*=========================== Rock ===============================================*/
 
-#define	ROCK_SPEED	0xD0000L
-
-const long		gRockDeltasX[] = {0,ROCK_SPEED,ROCK_SPEED,ROCK_SPEED,
-							0,-ROCK_SPEED,-ROCK_SPEED,-ROCK_SPEED};
-const long		gRockDeltasY[] = {-ROCK_SPEED,-ROCK_SPEED,0,ROCK_SPEED,
-							ROCK_SPEED,ROCK_SPEED,0,-ROCK_SPEED};
+#define	ROCK_SPEED 0xD0000L
 
 
 /**************** THROW Rock ************************/
@@ -85,28 +86,27 @@ const long		gRockDeltasY[] = {-ROCK_SPEED,-ROCK_SPEED,0,ROCK_SPEED,
 Boolean ThrowRock(void)
 {
 ObjNode *newNode;
-long	dx,dy;
-short		z,y,x;
+long dx,dy;
+short z,y,x;
 
 
-				/* SEE IF READY TO SHOOT */
+	/* SEE IF READY TO SHOOT */
 
 	if (!GetNewNeedState(kNeed_Attack))					// see if fire button pressed
 		return false;
 
 
-			/* SEE WHICH WAY TO MAKE IT GO */
+	/* SEE WHICH WAY TO MAKE IT GO */
+    
+    dx = (long)(ROCK_SPEED + labs(gDX)) * gThrowVectorsX[gMyDirection];
+    dy = (long)(ROCK_SPEED + labs(gDY)) * gThrowVectorsY[gMyDirection];
 
-	dx = gRockDeltasX[gMyDirection];
-	dy = gRockDeltasY[gMyDirection];
-
-
-			/* CALC COORDINATES */
+	/* CALC COORDINATES */
 
 	if (CalcWeaponStartCoords(dx,dy,&x,&y,&z,WS_THROW))	// calc start coord & see if in wall
 		return(false);
 
-					/* MAKE NEW OBJECT */
+	/* MAKE NEW OBJECT */
 
 	newNode = MakeNewShape(GroupNum_Rock,ObjType_Rock,0,x,y,z,MoveRock,PLAYFIELD_RELATIVE);
 	if (newNode == nil)
@@ -124,7 +124,7 @@ short		z,y,x;
 	gNumBullets++;
 
 
-				/* MAKE SHADOW */
+	/* MAKE SHADOW */
 
 	newNode->ShadowIndex = MakeShadow(newNode,SHADOWSIZE_SMALL); 	// allocate shadow & remember ptr to it
 
@@ -158,13 +158,13 @@ void MoveRock(void)
 		return;
 	}
 
-				/* DO COLLISION DETECT */
+	/* DO COLLISION DETECT */
 
 	if (!(GetMapTileAttribs(gX.Int,gY.Int)&TILE_ATTRIB_BULLETGOESTHRU))
 		DoPointCollision(gX.Int,gY.Int,CTYPE_BGROUND|CTYPE_MISC);
 
 
-				/* MAKE IT FALL */
+	/* MAKE IT FALL */
 
 	gThisNodePtr->DZ += 0x22000L;								// add gravity
 	gThisNodePtr->YOffset.L += gThisNodePtr->DZ;				// move it
@@ -182,11 +182,6 @@ void MoveRock(void)
 /*=========================== Tracer ===============================================*/
 
 #define	Tracer_SPEED	0x150000L
-
-const long		gTracerDeltasX[] = {0,Tracer_SPEED,Tracer_SPEED,Tracer_SPEED,
-							0,-Tracer_SPEED,-Tracer_SPEED,-Tracer_SPEED};
-const long		gTracerDeltasY[] = {-Tracer_SPEED,-Tracer_SPEED,0,Tracer_SPEED,
-							Tracer_SPEED,Tracer_SPEED,0,-Tracer_SPEED};
 
 /**************** SHOOT Tracer ************************/
 
@@ -207,8 +202,8 @@ short		z,y,x;
 
 			/* SEE WHICH WAY TO MAKE IT GO */
 
-	dx = gTracerDeltasX[gMyDirection];
-	dy = gTracerDeltasY[gMyDirection];
+	dx = Tracer_SPEED * gGunVectorsX[gMyDirection];
+	dy = Tracer_SPEED * gGunVectorsY[gMyDirection];
 
 
 			/* CALC COORDINATES */
@@ -252,11 +247,6 @@ short		z,y,x;
 #define	Flamethrower_SPEED		0x110000L
 #define FlamethrowerFallDelta	Special1
 
-const long		gFlamethrowerDeltasX[8] = {0,Flamethrower_SPEED,Flamethrower_SPEED,Flamethrower_SPEED,
-							0,-Flamethrower_SPEED,-Flamethrower_SPEED,-Flamethrower_SPEED};
-const long		gFlamethrowerDeltasY[8] = {-Flamethrower_SPEED,-Flamethrower_SPEED,0,Flamethrower_SPEED,
-							Flamethrower_SPEED,Flamethrower_SPEED,0,-Flamethrower_SPEED};
-
 
 /**************** SHOOT FLAMETHROWER ************************/
 
@@ -274,8 +264,8 @@ short		z,y,x;
 
 			/* SEE WHICH WAY TO MAKE IT GO */
 
-	dx = gFlamethrowerDeltasX[gMyDirection];
-	dy = gFlamethrowerDeltasY[gMyDirection];
+	dx = Flamethrower_SPEED * gGunVectorsX[gMyDirection];
+	dy = Flamethrower_SPEED * gGunVectorsY[gMyDirection];
 
 			/* CALC COORDINATES */
 
@@ -373,11 +363,6 @@ void MoveFlamethrower(void)
 
 #define	ELEPHANTGUN_SPEED	0x120000L
 
-const long		gElephantGunDeltasX[] = {0,ELEPHANTGUN_SPEED,ELEPHANTGUN_SPEED,ELEPHANTGUN_SPEED,
-							0,-ELEPHANTGUN_SPEED,-ELEPHANTGUN_SPEED,-ELEPHANTGUN_SPEED};
-const long		gElephantGunDeltasY[] = {-ELEPHANTGUN_SPEED,-ELEPHANTGUN_SPEED,0,ELEPHANTGUN_SPEED,
-							ELEPHANTGUN_SPEED,ELEPHANTGUN_SPEED,0,-ELEPHANTGUN_SPEED};
-
 /**************** SHOOT ELEPHANTGUN ************************/
 //
 // ACTUALLY THIS IS THE SHOTGUN
@@ -398,8 +383,8 @@ short		z,y,x;
 
 			/* SEE WHICH WAY TO MAKE IT GO */
 
-	dx = gElephantGunDeltasX[gMyDirection];
-	dy = gElephantGunDeltasY[gMyDirection];
+	dx = ELEPHANTGUN_SPEED * gGunVectorsX[gMyDirection];
+	dy = ELEPHANTGUN_SPEED * gGunVectorsY[gMyDirection];
 
 	if (CalcWeaponStartCoords(dx,dy,&x,&y,&z,WS_SHOOT))	// calc start coord & see if in wall
 		return(false);
@@ -442,11 +427,6 @@ short		z,y,x;
 
 #define	PIE_SPEED	0xf0000L
 
-const long		gPieDeltasX[] = {0,PIE_SPEED,PIE_SPEED,PIE_SPEED,
-							0,-PIE_SPEED,-PIE_SPEED,-PIE_SPEED};
-const long		gPieDeltasY[] = {-PIE_SPEED,-PIE_SPEED,0,PIE_SPEED,
-							PIE_SPEED,PIE_SPEED,0,-PIE_SPEED};
-
 
 /**************** THROW Pie ************************/
 
@@ -464,10 +444,9 @@ short		z,y,x;
 
 
 			/* SEE WHICH WAY TO MAKE IT GO */
-
-	dx = gPieDeltasX[gMyDirection];
-	dy = gPieDeltasY[gMyDirection];
-
+    
+    dx = (long)(PIE_SPEED + labs(gDX)) * gThrowVectorsX[gMyDirection];
+    dy = (long)(PIE_SPEED + labs(gDY)) * gThrowVectorsY[gMyDirection];
 
 			/* CALC COORDINATES */
 
@@ -556,11 +535,6 @@ void ExplodePie(ObjNode *theNode)
 
 #define	DOUBLESHOT_SPEED	0x120000L
 
-const long		gDoubleShotDeltasX[] = {0,DOUBLESHOT_SPEED,DOUBLESHOT_SPEED,DOUBLESHOT_SPEED,
-							0,-DOUBLESHOT_SPEED,-DOUBLESHOT_SPEED,-DOUBLESHOT_SPEED};
-const long		gDoubleShotDeltasY[] = {-DOUBLESHOT_SPEED,-DOUBLESHOT_SPEED,0,DOUBLESHOT_SPEED,
-							DOUBLESHOT_SPEED,DOUBLESHOT_SPEED,0,-DOUBLESHOT_SPEED};
-
 /**************** SHOOT DOUBLESHOT ************************/
 //
 // DoubleShots are low-powered, auto-firing, guns.
@@ -580,9 +554,9 @@ Byte 	sub;
 		return false;
 
 			/* SEE WHICH WAY TO MAKE IT GO */
-
-	dx = gDoubleShotDeltasX[gMyDirection];
-	dy = gDoubleShotDeltasY[gMyDirection];
+    
+    dx = (DOUBLESHOT_SPEED + labs(gDX)) * gGunVectorsX[gMyDirection];
+    dy = (DOUBLESHOT_SPEED + labs(gDY)) * gGunVectorsY[gMyDirection];
 
 	if (CalcWeaponStartCoords(dx,dy,&x,&y,&z,WS_SHOOT))	// calc start coord & see if in wall
 		return(false);
@@ -647,11 +621,6 @@ Byte 	sub;
 
 #define	TRIPLESHOT_SPEED	0x130000L
 
-const long		gTripleShotDeltasX[] = {0,TRIPLESHOT_SPEED,TRIPLESHOT_SPEED,TRIPLESHOT_SPEED,
-							0,-TRIPLESHOT_SPEED,-TRIPLESHOT_SPEED,-TRIPLESHOT_SPEED};
-const long		gTripleShotDeltasY[] = {-TRIPLESHOT_SPEED,-TRIPLESHOT_SPEED,0,TRIPLESHOT_SPEED,
-							TRIPLESHOT_SPEED,TRIPLESHOT_SPEED,0,-TRIPLESHOT_SPEED};
-
 
 /**************** SHOOT TRIPLESHOT ************************/
 //
@@ -679,9 +648,9 @@ static	unsigned long lastShotFrame = 0;
 	lastShotFrame = gFrames;							// remember when last shot was fired
 
 			/* SEE WHICH WAY TO MAKE IT GO */
-
-	dx = gTripleShotDeltasX[gMyDirection];
-	dy = gTripleShotDeltasY[gMyDirection];
+    
+    dx = (TRIPLESHOT_SPEED + labs(gDX)) * gGunVectorsX[gMyDirection];
+    dy = (TRIPLESHOT_SPEED + labs(gDY)) * gGunVectorsY[gMyDirection];
 
 	if (CalcWeaponStartCoords(dx,dy,&x,&y,&z,WS_SHOOT))	// calc start coord & see if in wall
 		return(false);
@@ -748,11 +717,6 @@ static	unsigned long lastShotFrame = 0;
 
 #define	ROCKETGUN_SPEED	0x100000L
 
-const long		gRocketGunDeltasX[] = {0,ROCKETGUN_SPEED,ROCKETGUN_SPEED,ROCKETGUN_SPEED,
-							0,-ROCKETGUN_SPEED,-ROCKETGUN_SPEED,-ROCKETGUN_SPEED};
-const long		gRocketGunDeltasY[] = {-ROCKETGUN_SPEED,-ROCKETGUN_SPEED,0,ROCKETGUN_SPEED,
-							ROCKETGUN_SPEED,ROCKETGUN_SPEED,0,-ROCKETGUN_SPEED};
-
 /**************** SHOOT ROCKETGUN ************************/
 
 Boolean ShootRocketGun(void)
@@ -774,9 +738,9 @@ short		z,y,x;
 	gLastRocketTime = gFrames;
 
 			/* SEE WHICH WAY TO MAKE IT GO */
-
-	dx = gRocketGunDeltasX[gMyDirection];
-	dy = gRocketGunDeltasY[gMyDirection];
+    
+    dx = (ROCKETGUN_SPEED + labs(gDX)) * gGunVectorsX[gMyDirection];
+    dy = (ROCKETGUN_SPEED + labs(gDY)) * gGunVectorsY[gMyDirection];
 
 	if (CalcWeaponStartCoords(dx,dy,&x,&y,&z,WS_SHOOT))	// calc start coord & see if in wall
 		return(false);
@@ -866,11 +830,6 @@ register	ObjNode *newObj;
 
 #define	HEATSEEK_SPEED	0x110000L
 
-const long		gHeatSeekDeltasX[] = {0,HEATSEEK_SPEED,HEATSEEK_SPEED,HEATSEEK_SPEED,
-							0,-HEATSEEK_SPEED,-HEATSEEK_SPEED,-HEATSEEK_SPEED};
-const long		gHeatSeekDeltasY[] = {-HEATSEEK_SPEED,-HEATSEEK_SPEED,0,HEATSEEK_SPEED,
-							HEATSEEK_SPEED,HEATSEEK_SPEED,0,-HEATSEEK_SPEED};
-
 
 /**************** SHOOT HEATSEEK ************************/
 
@@ -887,9 +846,9 @@ short		z,y,x;
 
 
 			/* SEE WHICH WAY TO MAKE IT GO */
-
-	dx = gHeatSeekDeltasX[gMyDirection];
-	dy = gHeatSeekDeltasY[gMyDirection];
+    
+    dx = (HEATSEEK_SPEED + labs(gDX)) * gGunVectorsX[gMyDirection];
+    dy = (HEATSEEK_SPEED + labs(gDY)) * gGunVectorsY[gMyDirection];
 
 	if (CalcWeaponStartCoords(dx,dy,&x,&y,&z,WS_SHOOT))	// calc start coord & see if in wall
 		return(false);
@@ -1046,11 +1005,6 @@ update:
 
 #define	PIXIEDUST_SPEED	0x0d0000L
 
-const long		gPixieGunDeltasX[] = {0,PIXIEDUST_SPEED,PIXIEDUST_SPEED,PIXIEDUST_SPEED,
-							0,-PIXIEDUST_SPEED,-PIXIEDUST_SPEED,-PIXIEDUST_SPEED};
-const long		gPixieGunDeltasY[] = {-PIXIEDUST_SPEED,-PIXIEDUST_SPEED,0,PIXIEDUST_SPEED,
-							PIXIEDUST_SPEED,PIXIEDUST_SPEED,0,-PIXIEDUST_SPEED};
-
 
 /**************** SHOOT PIXIEDUST ************************/
 
@@ -1071,9 +1025,9 @@ short		z,y,x;
 	gLastPixieTime = gFrames;
 
 			/* SEE WHICH WAY TO MAKE IT GO */
-
-	dx = gPixieGunDeltasX[gMyDirection];
-	dy = gPixieGunDeltasY[gMyDirection];
+    
+    dx = (PIXIEDUST_SPEED + labs(gDX)) * gGunVectorsX[gMyDirection];
+    dy = (PIXIEDUST_SPEED + labs(gDY)) * gGunVectorsY[gMyDirection];
 
 	if (CalcWeaponStartCoords(dx,dy,&x,&y,&z,WS_SHOOT))	// calc start coord & see if in wall
 		return(false);
