@@ -73,7 +73,7 @@
 #define	BUNNIES_Xf	602
 #define	BUNNIES_Yf	467
 
-#define	COINS_Xf	445
+#define	COINS_Xf	452
 #define	COINS_Yf	465
 
 #define	HEALTH_Xf	106
@@ -377,7 +377,7 @@ long	num,x,y;
 
 	num = gNumCoins;
 	htab = x;				// draw right to left
-	for (i=0; i<3; i++)
+	for (i=0; i<4; i++)
 	{
 		digit = num-(num/10*10);
 		DrawFrameToScreen_NoMask(htab,y,GroupNum_ScoreNumbers,ObjType_ScoreNumbers,digit);
