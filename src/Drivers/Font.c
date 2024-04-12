@@ -89,7 +89,7 @@ static void MoveText(void)
 		}
 	}
 
-	gThisNodePtr->Y.L = theNode->SpecialLetterBaseY + theNode->YOffset.L;		// move up
+	gThisNodePtr->Y.L = (int32_t)(theNode->SpecialLetterBaseY + theNode->YOffset.L);		// move up
 
 //	UpdateObject();
 }

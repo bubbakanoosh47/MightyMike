@@ -87,9 +87,9 @@ struct ObjNode
 	MikeFixed	OldYOffset;		// old offset for y draw position on playfield
 	Rect		drawBox;		// box obj was last drawn to
 
-	int32_t		DX;				// DX value (actually a fixed-point number)
-	int32_t		DY;				// DY value
-	int32_t		DZ;				// DZ value
+	long		DX;				// DX value (actually a fixed-point number)
+    long		DY;				// DY value
+    long		DZ;				// DZ value
 	void		(*MoveCall)(void);	// pointer to object's move routine
 	Ptr			AnimsList;		// ptr to object's animations list. nil = none
 	long			AnimLine;		// line # in current anim

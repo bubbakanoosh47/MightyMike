@@ -656,7 +656,7 @@ static void MoveCursor(void)
 
 				/* CHANGE ANIM DEPENDING ON DIRECTION */
 
-	int anim = gThisNodePtr->SubType;
+	long anim = gThisNodePtr->SubType;
 	if (abs(diffX) < 0x8000 && abs(diffY) < 0x8000)
 	{
 	}

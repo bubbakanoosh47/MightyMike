@@ -702,7 +702,13 @@ void DumpUpdateRegions(void)
 
 void InitYOffset(ObjNode* objNode, long yOffset)
 {
-	objNode->YOffset.L = objNode->OldYOffset.L = yOffset << 16;
+    // Perform a range check before the shift to ensure no overflow occurs
+    if (yOffset < INT32_MIN >> 16 || yOffset > INT32_MAX >> 16) {
+        // Handle the error case where yOffset is out of range
+        fprintf(stderr, "Error: yOffset out of range\n");
+        exit(EXIT_FAILURE);
+    }
+    objNode->YOffset.L = objNode->OldYOffset.L = (int32_t)(yOffset << 16);
 }
 
 

@@ -477,10 +477,11 @@ void DrawASprite(ObjNode *theNodePtr)
 {
 int32_t	width;
 int32_t	height;
-int32_t	frameNum;
+long	frameNum;
 int32_t	x,y,offset;
+int32_t clipTop,clipRight,clipLeft,clipBottom;
 Rect	oldBox;
-int32_t	shapeNum,groupNum;
+long	shapeNum,groupNum;
 uint8_t*		destPtr;
 uint8_t*		destStartPtr;
 const uint8_t*	maskPtr;
@@ -518,20 +519,22 @@ const uint8_t*	srcPtr;
 	y += gScreenYOffset;
 
 	oldBox = theNodePtr->drawBox;						// remember old box
+    
+    clipLeft = (int32_t)gRegionClipLeft[theNodePtr->ClipNum];
+    clipRight = (int32_t)gRegionClipRight[theNodePtr->ClipNum];
+    clipTop = (int32_t)gRegionClipTop[theNodePtr->ClipNum];
+    clipBottom = (int32_t)gRegionClipBottom[theNodePtr->ClipNum];
 
-	if ((x < gRegionClipLeft[theNodePtr->ClipNum]) ||		// see if out of bounds
-		((x+width) >= gRegionClipRight[theNodePtr->ClipNum]) ||
-		((y+height) <= gRegionClipTop[theNodePtr->ClipNum]) ||
-		(y >= gRegionClipBottom[theNodePtr->ClipNum]))
-			goto update;
+	if ((x < clipLeft) || ((x+width) >= clipRight) || ((y+height) <= clipTop) || (y >= clipBottom)) // see if out of bounds
+        goto update;
 
-	if	((y+height) > gRegionClipBottom[theNodePtr->ClipNum])	// see if need to clip height
-		height -= (y+height)-gRegionClipBottom[theNodePtr->ClipNum];
+	if ((y+height) > clipBottom)	// see if need to clip height
+		height -= (y+height)-clipBottom;
 
-	if (y < gRegionClipTop[theNodePtr->ClipNum])			// see if need to clip TOP
+	if (y < clipTop)			// see if need to clip TOP
 	{
-		offset = gRegionClipTop[theNodePtr->ClipNum]-y;
-		y = gRegionClipTop[theNodePtr->ClipNum];
+		offset = clipTop-y;
+		y = clipTop;
 		height -= offset;
 		srcPtr += offset*width;
 		maskPtr += offset*width;
@@ -634,7 +637,7 @@ void EraseASprite(ObjNode *theNodePtr)
 
 static void DrawPFSprite(ObjNode *theNodePtr)
 {
-long	width,height;
+int32_t	width,height;
 uint8_t*			destStartPtr;
 const uint8_t*		tileMaskStartPtr;
 const uint8_t*		srcStartPtr;
@@ -642,8 +645,10 @@ const uint8_t*		originalSrcStartPtr;
 const uint8_t*		maskStartPtr;
 const uint8_t*		originalMaskStartPtr;
 long	frameNum;
-long	realWidth,originalY,topToClip,leftToClip;
-long	drawWidth,shapeNum,groupNum,numHSegs;
+long	realWidth,topToClip,leftToClip;
+long	shapeNum,groupNum,numHSegs;
+int32_t originalY;
+int32_t drawWidth;
 Boolean	priorityFlag;
 int32_t	x, y;
 

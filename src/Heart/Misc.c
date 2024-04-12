@@ -314,7 +314,7 @@ int32_t		decompType;
 	iErr = FSRead(fRefNum,&numToRead,(Ptr)&decompSize);			// read 4 byte length
 	GAME_ASSERT_MESSAGE(iErr == noErr, "Error reading Packed data!");
 	GAME_ASSERT(numToRead == 4);
-	UnpackIntsBE(numToRead, 1, &decompSize);
+	UnpackIntsBE((int32_t)numToRead, 1, &decompSize);
 	fileSize -= numToRead;
 
 					/*	READ DECOMP TYPE */
@@ -323,7 +323,7 @@ int32_t		decompType;
 	iErr = FSRead(fRefNum,&numToRead,(Ptr)&decompType);			// read compression type
 	GAME_ASSERT_MESSAGE(iErr == noErr, "Error reading Packed data Header!");
 	GAME_ASSERT(numToRead == 4);
-	UnpackIntsBE(numToRead, 1, &decompType);
+	UnpackIntsBE((int32_t)numToRead, 1, &decompType);
 	fileSize -= numToRead;
 
 					/* GET MEMORY FOR UNPACKED DATA */
@@ -711,8 +711,8 @@ void FillThermometer(short percent)
 	const int width = 200;
 	const int height = 16;
 
-	int left = gScreenXOffset + 220;
-	int top  = gScreenYOffset + 230;
+	int left = (int32_t)gScreenXOffset + 220;
+	int top  = (int32_t)gScreenYOffset + 230;
 	int right = left + width;
 	int bottom = top + height;
 

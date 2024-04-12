@@ -401,7 +401,7 @@ void PlayArea(void)
 
 #if _DEBUG
 		if (GetNewSDLKeyState(SDL_SCANCODE_F8))
-			DumpIndexedTGA("playfield.tga", PF_BUFFER_WIDTH, PF_BUFFER_HEIGHT, *gPFBufferHandle);
+			DumpIndexedTGA("playfield.tga", (int32_t)PF_BUFFER_WIDTH, (int32_t)PF_BUFFER_HEIGHT, *gPFBufferHandle);
 
 		if (GetNewSDLKeyState(SDL_SCANCODE_F9))
 			gScreenScrollFlag = !gScreenScrollFlag;
@@ -708,7 +708,8 @@ FSSpec		mySpec;
 
 void TryToSaveBothPlayers(short gameNum)
 {
-long	score,numCoins,numLives,currentWeaponType;
+int32_t	score,numCoins;
+short   numLives,currentWeaponType;
 long	scene,area,numWeapons,currentWeaponIndex;
 long	myHealth,myMaxHealth;
 long	difficultySetting;
@@ -742,8 +743,8 @@ delete:
 
 				/* KEEP CURRENT PLAYER'S VITALS */
 
-	score = gScore;
-	numCoins = gNumCoins;
+	score = (int32_t)gScore;
+	numCoins = (int32_t)gNumCoins;
 	numLives = gNumLives;
 	currentWeaponType = gCurrentWeaponType;
 	scene = gSceneNum;
@@ -836,8 +837,8 @@ SaveGameFile	saveGame;
 
 	snprintf(saveGame.magic, sizeof(saveGame.magic), "%s", SAVEGAMEFILE_MAGIC);
 	memcpy(saveGame.myWeapons, gMyWeapons, sizeof(saveGame.myWeapons));
-	saveGame.score					= gScore;
-	saveGame.numCoins				= gNumCoins;
+	saveGame.score					= (int32_t)gScore;
+	saveGame.numCoins				= (int32_t)gNumCoins;
 	saveGame.numLives				= gNumLives;
 	saveGame.currentWeaponType		= gCurrentWeaponType;
 	saveGame.sceneNum				= scene;
@@ -1277,7 +1278,7 @@ static void InitDefaultPrefs(void)
 	gGamePrefs.music = true;
 	gGamePrefs.soundEffects = true;
 	gGamePrefs.interpolateAudio = true;
-	gGamePrefs.gameTitlePowerPete = false;
+	gGamePrefs.gameTitlePowerPete = true;
 	gGamePrefs.thermometerScreen = true;
 	gGamePrefs.debugInfoInTitleBar = false;
 	gGamePrefs.colorCorrection = true;

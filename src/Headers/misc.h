@@ -64,6 +64,16 @@ static inline int PositiveModulo(int value, unsigned int m)
 	return mod;
 }
 
+static inline int Long_PositiveModulo(long value, long m)
+{
+    int mod = value % (int)m;
+    if (mod < 0)
+    {
+        mod += m;
+    }
+    return mod;
+}
+
 
 #define GAME_ASSERT(condition)											\
 	do {																\

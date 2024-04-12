@@ -527,7 +527,7 @@ gotit:
 		}
 
 
-	HighScoreList[i] = newScore;							// put new score in spot
+	HighScoreList[i] = (int32_t)newScore;							// put new score in spot
 	HighScoreNames[i][0] = '\0';							// erase old name from spot
 
 
@@ -1063,7 +1063,7 @@ short	lineCount;
 	textRez = LoadRawFile(textFilePath);						// load credits file
 	GAME_ASSERT(textRez);
 
-	textLength = GetHandleSize(textRez);
+	textLength = (int32_t)GetHandleSize(textRez);
 	textPos = 0;
 	lineCount = 100;
 

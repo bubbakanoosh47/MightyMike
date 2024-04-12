@@ -202,8 +202,8 @@ void OnChangePlayfieldSize(void)
 
 	if (gGamePrefs.pfSize != PFSIZE_SMALL)
 	{
-		VISIBLE_WIDTH = (PF_TILE_WIDTH - 1) * TILE_SIZE;
-		VISIBLE_HEIGHT = (PF_TILE_HEIGHT + 1) * TILE_SIZE;
+		VISIBLE_WIDTH = ((int32_t)PF_TILE_WIDTH - 1) * TILE_SIZE;
+		VISIBLE_HEIGHT = ((int32_t)PF_TILE_HEIGHT + 1) * TILE_SIZE;
 	}
 	else
 	{
@@ -635,8 +635,8 @@ void ScrollPlayfield(void)
 	}
 	else if (gTweenFrameFactor.L < 0x10000)						// interpolate camera position
 	{
-		int32_t dx = gOldScrollX - gScrollX;
-		int32_t dy = gOldScrollY - gScrollY;
+		int32_t dx = (int32_t)(gOldScrollX - gScrollX);
+		int32_t dy = (int32_t)(gOldScrollY - gScrollY);
 		gTweenedScrollX = gScrollX + Fix32_Int(Fix32_Mul(dx << 16, gOneMinusTweenFrameFactor.L));
 		gTweenedScrollY = gScrollY + Fix32_Int(Fix32_Mul(dy << 16, gOneMinusTweenFrameFactor.L));
 	}
@@ -1424,8 +1424,8 @@ long		widths[4];
 long		srcAdd,destAdd;
 long		method;
 
-	left	= PositiveModulo(gTweenedScrollX + gShakeyScreenOffsetX, PF_BUFFER_WIDTH);		// get PF buffer pixel coords to start @
-	top		= PositiveModulo(gTweenedScrollY + gShakeyScreenOffsetY, PF_BUFFER_HEIGHT);
+	left	= Long_PositiveModulo(gTweenedScrollX + gShakeyScreenOffsetX, PF_BUFFER_WIDTH);		// get PF buffer pixel coords to start @
+	top		= Long_PositiveModulo(gTweenedScrollY + gShakeyScreenOffsetY, PF_BUFFER_HEIGHT);
 
 	if ((left+(PF_WINDOW_WIDTH-1)) > PF_BUFFER_WIDTH)		// see if 2 horiz segments
 	{

@@ -707,8 +707,8 @@ void PinMyDeltas(void)
 	int32_t mag = GetLeftStickMagnitude_Fix32();
 	if (mag != 0 && mag < 0x10000)
 	{
-		maxSpeedX = Fix32_Mul(maxSpeedX, mag);
-		maxSpeedY = Fix32_Mul(maxSpeedY, mag);
+		maxSpeedX = Fix32_Mul((int32_t)maxSpeedX, mag);
+		maxSpeedY = Fix32_Mul((int32_t)maxSpeedY, mag);
 	}
 
 	if (gDX > maxSpeedX)
