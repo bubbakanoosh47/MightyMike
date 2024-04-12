@@ -64,15 +64,23 @@ Boolean AddEnemy_Clown(ObjectEntryType *itemPtr)
 {
 register	ObjNode		*newObj;
 
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
+    
 	switch(itemPtr->parm[0])						// see which kind of clown to create
 	{
 		case 0:
 						/***********************/
 						/* ADD WALKING CLOWN   */
 						/***********************/
-
-			if (gNumEnemies >= MAX_ENEMIES)			// check # enemies
-				return(false);
 
 			newObj = MakeNewShape(GroupNum_Clown,ObjType_Clown,SUB_WALK_RIGHT,itemPtr->x,
 								itemPtr->y,50,MoveClown_Walker,PLAYFIELD_RELATIVE);
@@ -86,9 +94,6 @@ register	ObjNode		*newObj;
 					/*****************************/
 					/* ADD PIE THROWING CLOWN 	 */
 					/*****************************/
-
-			if (gNumEnemies >= MAX_ENEMIES)			// check # enemies
-				return(false);
 
 			newObj = MakeNewShape(GroupNum_Clown,ObjType_Clown,SUB_WALK_RIGHT,itemPtr->x,
 								itemPtr->y,50,MoveClown_PieThrower,PLAYFIELD_RELATIVE);

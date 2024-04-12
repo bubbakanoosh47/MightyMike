@@ -46,8 +46,16 @@ Boolean AddEnemy_Spider(ObjectEntryType *itemPtr)
 {
 register	ObjNode		*newObj;
 
-	if (gNumEnemies >= (MAX_ENEMIES*2))				// check # enemies
-		return(false);
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT * 2)
+                return(false);
+    }
 
 	newObj = MakeNewShape(GroupNum_Spider,ObjType_Spider,SPIDER_SUB_CRAWL,
 			itemPtr->x,itemPtr->y,50,MoveSpider,PLAYFIELD_RELATIVE);

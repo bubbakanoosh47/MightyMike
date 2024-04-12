@@ -98,7 +98,22 @@ void MoveMagicHat(void)
 	{
 				/* WAITING */
 
-		if ((!(MyRandomLong()&0b1111111)) && (gNumEnemies < MAX_ENEMIES))
+        switch(gDifficultySetting)
+        {
+            case DIFFICULTY_HARD:
+                if (gNumEnemies >= MAX_ENEMIES_HARD)
+                    return;
+                break;
+            default:
+                if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                    return;
+        }
+        
+        // Avoided Bitwise Operator for Random Number Generation:
+        // Changed !(MyRandomLong() & 0b1111111) to MyRandomLong() % 128 == 0.
+        // The original code was checking if all of the last seven bits of MyRandomLong() were 0,
+        // which is effectively the same as checking if the number is divisible by 128.
+		if (MyRandomLong() % 128 == 0)
 		{
 			SwitchAnim(gThisNodePtr,SUB_HAT_SPIT);		// start to spit
 		}

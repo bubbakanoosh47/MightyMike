@@ -67,16 +67,24 @@ Boolean AddEnemy_Caveman(ObjectEntryType *itemPtr)
 register	ObjNode		*newObj;
 Byte		animNum;
 
-
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
+    
 	switch(itemPtr->parm[0])						// see which kind of caveman to create
 	{
 		case 0:
 						/***********************/
 						/* ADD WALKING CAVEMAN */
 						/***********************/
-
-			if (gNumEnemies >= MAX_ENEMIES)			// check # enemies
-				return(false);
 
 			newObj = MakeNewShape(GroupNum_Caveman,ObjType_Caveman,SUB_WALK_RIGHT,itemPtr->x,
 								itemPtr->y,50,MoveCaveman_Walker,PLAYFIELD_RELATIVE);
@@ -92,9 +100,6 @@ Byte		animNum;
 					/*****************************/
 					/* ADD BONE THROWING CAVEMAN */
 					/*****************************/
-
-			if (gNumEnemies >= MAX_ENEMIES)			// check # enemies
-				return(false);
 
 			newObj = MakeNewShape(GroupNum_Caveman,ObjType_Caveman,SUB_WALK_RIGHT,itemPtr->x,
 								itemPtr->y,50,MoveCaveman_Thrower,PLAYFIELD_RELATIVE);

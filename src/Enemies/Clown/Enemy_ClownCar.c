@@ -68,9 +68,16 @@ Boolean AddEnemy_ClownCar(ObjectEntryType *itemPtr)
 {
 register	ObjNode		*newObj;
 
-
-	if (gNumEnemies >= MAX_ENEMIES)			// check # enemies
-		return(false);
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
 
 	newObj = MakeNewShape(GroupNum_ClownCar,ObjType_ClownCar,CLOWNCAR_SUB_DRIVE_UP,
 			itemPtr->x,itemPtr->y,50,MoveClownCar_Driving,PLAYFIELD_RELATIVE);
@@ -198,8 +205,16 @@ void MakeCarClown(void)
 {
 register	ObjNode		*newObj;
 
-	if (gNumEnemies >= (MAX_ENEMIES*3/2))					// check # enemies
-		return;
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD*3/2)
+                return;
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT*3/2)
+                return;
+    }
 
 	newObj = MakeNewShape(GroupNum_ClownCar,ObjType_ClownCar,CARCLOWN_SUB_WALK_UP,
 			gX.Int,gY.Int+9,gThisNodePtr->Z,MoveCarClown,PLAYFIELD_RELATIVE);

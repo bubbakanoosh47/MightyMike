@@ -45,10 +45,6 @@ Boolean AddEnemy_Triceratops(ObjectEntryType *itemPtr)
 register	ObjNode		*newObj;
 short			animNum;
 
-//	if (gNumEnemies >= MAX_ENEMIES)					// check # enemies
-//		return(false);
-
-
 	animNum = itemPtr->parm[0];						// see which way to aim him
 
 	newObj = MakeNewShape(GroupNum_Triceratops,ObjType_Triceratops,animNum,

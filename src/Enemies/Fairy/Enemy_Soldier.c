@@ -49,9 +49,16 @@ Boolean AddEnemy_Soldier(ObjectEntryType *itemPtr)
 {
 register	ObjNode		*newObj;
 
-
-	if (gNumEnemies >= MAX_ENEMIES)			// check # enemies
-		return(false);
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
 
 	newObj = MakeNewShape(GroupNum_Soldier,ObjType_Soldier,SUB_WALK_RIGHT,itemPtr->x,
 						itemPtr->y,50,MoveSoldier,PLAYFIELD_RELATIVE);

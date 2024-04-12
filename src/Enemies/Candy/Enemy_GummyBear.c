@@ -56,8 +56,16 @@ Boolean AddEnemy_GBear(ObjectEntryType *itemPtr)
 {
 register	ObjNode		*newObj;
 
-	if (gNumEnemies >= MAX_ENEMIES)				// check # enemies
-		return(false);
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
 
 	newObj = MakeNewShape(GroupNum_RedGummy,ObjType_RedGummy,SUB_WALK_RIGHT,itemPtr->x,
 						itemPtr->y,50,MoveGBear,PLAYFIELD_RELATIVE);
@@ -195,8 +203,15 @@ short			i;
 
 	for (i=0; i < 3; i++)
 	{
-		if (gNumEnemies >= (MAX_ENEMIES+3))				// check # enemies
-			return;
+        switch(gDifficultySetting)
+        {
+            case DIFFICULTY_HARD:
+                if (gNumEnemies >= MAX_ENEMIES_HARD + 3)
+                    return;
+            default:
+                if (gNumEnemies >= MAX_ENEMIES_DEFAULT + 3)
+                    return;
+        }
 
 		newObj = MakeNewShape(GroupNum_RedGummy,ObjType_RedGummy,SUB_TINY_RIGHT,gX.Int,
 							gY.Int,50,MoveTinyGummy,PLAYFIELD_RELATIVE);

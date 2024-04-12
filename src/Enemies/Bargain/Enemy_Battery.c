@@ -52,10 +52,16 @@ static	long dxList[] = {0,BATTERY_SPEED,BATTERY_SPEED,BATTERY_SPEED,0
 static	long dyList[] = {-BATTERY_SPEED,-BATTERY_SPEED,0,BATTERY_SPEED,
 					BATTERY_SPEED,BATTERY_SPEED,0,-BATTERY_SPEED};
 
-	if (gNumEnemies >= MAX_ENEMIES)					// check # enemies
-		return(false);
-
-
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
 
 	if ((animNum = itemPtr->parm[0]) == 8)			// see if best guess @ aim
 		animNum = GuessBatteryAnim(itemPtr->x,itemPtr->y);

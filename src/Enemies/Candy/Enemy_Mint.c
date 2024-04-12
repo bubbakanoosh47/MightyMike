@@ -40,8 +40,16 @@ Boolean AddEnemy_Mint(ObjectEntryType *itemPtr)
 {
 register	ObjNode		*newObj;
 
-	if (gNumEnemies >= MAX_ENEMIES)				// check # enemies
-		return(false);
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
 
 	newObj = MakeNewShape(GroupNum_Mint,ObjType_Mint,0,itemPtr->x,
 						itemPtr->y,50,MoveMint,PLAYFIELD_RELATIVE);

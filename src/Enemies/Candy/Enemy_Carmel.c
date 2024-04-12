@@ -62,8 +62,16 @@ Boolean AddEnemy_Carmel(ObjectEntryType *itemPtr)
 register	ObjNode		*newObj;
 short		anim;
 
-	if (gNumEnemies >= MAX_ENEMIES)				// check # enemies
-		return(false);
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
 
 	if (itemPtr->parm[0] == 0)					// see which type
 	{

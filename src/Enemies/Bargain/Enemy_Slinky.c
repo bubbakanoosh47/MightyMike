@@ -49,8 +49,16 @@ Boolean AddEnemy_Slinky(ObjectEntryType *itemPtr)
 register	ObjNode		*newObj;
 short			animNum;
 
-	if (gNumEnemies >= MAX_ENEMIES)					// check # enemies
-		return(false);
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
 
 	animNum = GuessSlinkyAnim(0,itemPtr->x,itemPtr->y);
 

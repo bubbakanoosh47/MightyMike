@@ -52,9 +52,16 @@ Boolean AddEnemy_ChocBunny(ObjectEntryType *itemPtr)
 {
 register	ObjNode		*newObj;
 
-	if (gNumEnemies >= MAX_ENEMIES)					// check # enemies
-		return(false);
-
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD)
+                return(false);
+            break;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT)
+                return(false);
+    }
 
 	newObj = MakeNewShape(GroupNum_ChocBunny,ObjType_ChocBunny,CHOCBUNNY_SUB_STAND,
 			itemPtr->x,itemPtr->y,50,MoveChocBunny,PLAYFIELD_RELATIVE);
