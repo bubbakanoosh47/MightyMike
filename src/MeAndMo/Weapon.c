@@ -334,6 +334,8 @@ void WeaponHitEnemy(ObjNode *weaponNode)
 		case	ObjType_Flamethrower:						// flamethrower does nothing
 		case	ObjType_RocketGun:							// rocketgun does nothing
 		case	ObjType_Cake:								// grenade does nothing
+        case    ObjType_PixieDust:                          // nothing stops the elephant gun
+        case    ObjType_ElephantGun:                        // nothing stops the elephant gun
 				break;
 
 		case	ObjType_Pie:								// pie explodes
