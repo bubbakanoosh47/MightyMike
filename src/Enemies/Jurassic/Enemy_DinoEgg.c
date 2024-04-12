@@ -28,7 +28,8 @@
 #define	HATCHLING_WORTH		1
 #define	HATCHLING_DAMAGE_THRESHOLD	1
 
-#define	NUM_HATCHERS		6					// # hatchlings to come out of egg
+#define NUM_HATCHERS_DEFAULT 6					// # hatchlings to come out of egg
+#define NUM_HATCHERS_HARD 12
 
 enum
 {
@@ -118,7 +119,23 @@ register	ObjNode  *theNode;
 		if (theNode->HatchFlag)								// see if spawn
 		{
 			theNode->HatchFlag = false;
-			for (i=0; i < NUM_HATCHERS; i++)
+            int numHatchers;
+            switch(gDifficultySetting)
+            {
+                case DIFFICULTY_EASY:
+                    numHatchers = NUM_HATCHERS_DEFAULT;
+                    break;
+                case DIFFICULTY_NORMAL:
+                    numHatchers = NUM_HATCHERS_DEFAULT;
+                    break;
+                case DIFFICULTY_HARD:
+                    numHatchers = NUM_HATCHERS_HARD;
+                    break;
+                default:
+                    numHatchers = NUM_HATCHERS_DEFAULT;
+                    break;
+            }
+			for (i=0; i < numHatchers; i++)
 			{
 				MakeHatchling(theNode->X.Int,theNode->Y.Int);
 			}
@@ -133,7 +150,7 @@ void MakeHatchling(short x, short y)
 {
 register	ObjNode		*newObj;
 
-	if (gNumEnemies >= 15)					// check # enemies
+	if (gNumEnemies >= 100)					// check # enemies
 		return;
 
 	newObj = MakeNewShape(GroupNum_DinoEgg,ObjType_DinoEgg,DINOEGG_SUB_HATCHLING_RIGHT,
