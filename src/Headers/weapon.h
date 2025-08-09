@@ -25,6 +25,7 @@ enum
 	WEAPON_TYPE_TRIPLESHOT,
 	WEAPON_TYPE_FLAMETHROWER,
 	WEAPON_TYPE_ROCKETGUN,
+    WEAPON_TYPE_EXTRAHEALTH,
 	NUM_WEAPON_TYPES
 };
 
@@ -58,7 +59,8 @@ enum
 	ObjType_MyShieldEffect,
 	ObjType_RocketGun,
 	ObjType_Nuke,
-	ObjType_PixieDust
+	ObjType_PixieDust,
+    ObjType_ExtraHealth
 };
 
 enum
@@ -81,7 +83,8 @@ enum
 	GroupNum_MyShieldEffect = GROUP_WEAPONS,
 	GroupNum_RocketGun = GROUP_WEAPONS,
 	GroupNum_Nuke = GROUP_WEAPONS,
-	GroupNum_PixieDust = GROUP_WEAPONS
+	GroupNum_PixieDust = GROUP_WEAPONS,
+    GroupNum_ExtraHealth = GROUP_WEAPONS
 };
 
 
@@ -91,6 +94,7 @@ void	InitWeaponsList(void);
 void	InitBullets(void);
 Boolean	AddWeaponPowerup(ObjectEntryType *);
 void	GetAWeapon(short);
+void    GetAHealthWeapon();
 void	CheckFireWeapon(void);
 void	SelectNextWeapon(int delta);
 void	RemoveCurrentWeaponFromInventory(void);
@@ -102,6 +106,8 @@ void	MoveBasicRico(void);
 Boolean	ShootSuctionCup(void);
 Boolean	ShootCake(void);
 void	MoveCake(void);
+Boolean ShootHealth(void);
+void    MoveHealth(void);
 Boolean	ShootOozie(void);
 Boolean	ShootRBand(void);
 Boolean	ShootToothpaste(void);

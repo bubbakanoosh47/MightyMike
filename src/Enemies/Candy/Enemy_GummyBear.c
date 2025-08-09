@@ -200,19 +200,18 @@ void ExplodeGummy(void)
 register	ObjNode		*newObj;
 short			i;
 
-
+    switch(gDifficultySetting)
+    {
+        case DIFFICULTY_HARD:
+            if (gNumEnemies >= MAX_ENEMIES_HARD + 3)
+                return;
+        default:
+            if (gNumEnemies >= MAX_ENEMIES_DEFAULT + 3)
+                return;
+    }
+    
 	for (i=0; i < 3; i++)
 	{
-        switch(gDifficultySetting)
-        {
-            case DIFFICULTY_HARD:
-                if (gNumEnemies >= MAX_ENEMIES_HARD + 3)
-                    return;
-            default:
-                if (gNumEnemies >= MAX_ENEMIES_DEFAULT + 3)
-                    return;
-        }
-
 		newObj = MakeNewShape(GroupNum_RedGummy,ObjType_RedGummy,SUB_TINY_RIGHT,gX.Int,
 							gY.Int,50,MoveTinyGummy,PLAYFIELD_RELATIVE);
 		if (newObj == nil)
@@ -233,7 +232,6 @@ short			i;
 		CalcEnemyScatterOffset(newObj);
 
 		gNumEnemies++;
-
 	}
 }
 

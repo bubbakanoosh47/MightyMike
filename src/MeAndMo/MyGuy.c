@@ -1225,7 +1225,11 @@ void MeHitBonusObject(ObjNode *targetNode)
 			GiveMeHealth();
 			targetNode->ItemIndex = nil;					// its never coming back
 			DeleteObject(targetNode);
-		}
+        } else {
+            GetAHealthWeapon();                             // get the weapon (specific health item set)
+            targetNode->ItemIndex = nil;                        // wont be comin back
+            DeleteObject(targetNode);
+        }
 		return;
 	}
 

@@ -4,9 +4,9 @@ set(GAME_TARGET				"MightyMike")
 set(GAME_VERSION			"3.0.2")
 
 set(GAME_MAC_ICNS			"packaging/${GAME_TARGET}.icns")
-set(GAME_MAC_COPYRIGHT		"© 1995 Pangea Software, Inc.\n© 2022 Iliyas Jorio.")
-set(GAME_MAC_BUNDLE_ID		"io.jor.mightymike")
-set(GAME_MAC_BUNDLE_NAME	"Mighty Mike")
+set(GAME_MAC_COPYRIGHT		"© 1995 Pangea Software, Inc.\n© 2022 Iliyas Jorio. 2024 Greg DeJong.")
+set(GAME_MAC_BUNDLE_ID		"com.dejongdevelopment.powerpete")
+set(GAME_MAC_BUNDLE_NAME	"Power Pete")
 
 set(CMAKE_MODULE_PATH		"${CMAKE_SOURCE_DIR}/cmake")
 

@@ -47,17 +47,17 @@
 #define	DOUBLESHOT_POWER			3
 
 #define	TRIPLESHOT_DURATION		(GAME_FPS)
-#define	TRIPLESHOT_POWER			4
+#define	TRIPLESHOT_POWER			6
 
 #define	ROCKETGUN_DURATION		(GAME_FPS*3)
-#define	ROCKETGUN_POWER			7
+#define	ROCKETGUN_POWER			10
 #define	ROCKET_REFIRE_TIME		(GAME_FPS/2)				// speed can shoot rocket
 
 #define	HEATSEEK_DURATION		(GAME_FPS*6)
 #define	HEATSEEK_POWER			3
 
 #define	PIXIEDUST_DURATION		(GAME_FPS*2)
-#define	PIXIEDUST_POWER			7
+#define	PIXIEDUST_POWER			10
 #define	PIXIE_REFIRE_TIME		(GAME_FPS/2)
 
 /**********************/

@@ -21,7 +21,7 @@ void	InitEnemies(void);
 Boolean	DoEnemyCollisionDetect(unsigned long);
 void	UpdateEnemy(void);
 void	CalcEnemyScatterOffset(ObjNode *);
-Boolean	EnemyLoseHealth(ObjNode *, short);
+Boolean	EnemyLoseHealth(ObjNode *, ObjNode *);
 void	KillEnemy(ObjNode *);
 void	MoveEnemySplat(void);
 void	DeleteEnemy(ObjNode *);

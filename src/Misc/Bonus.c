@@ -496,13 +496,27 @@ void MoveKey(void)
 void PutBonusPOW(short x, short y)
 {
 static ObjectEntryType	item;
-
-	if (!(MyRandomLong()&0b1))
+    
+    bool generateBonus = false;
+    
+    // Change odds based on difficulty
+    switch (gDifficultySetting) {
+        case DIFFICULTY_EASY:
+            generateBonus = (MyRandomLong() % 2 == 0);
+            break;
+        case DIFFICULTY_NORMAL:
+            generateBonus = (MyRandomLong() % 3 == 0);
+            break;
+        case DIFFICULTY_HARD:
+            generateBonus = (MyRandomLong() % 5 == 0);
+            break;
+    }
+    
+	if (generateBonus)
 	{
 		if (MyRandomLong()&1)
 		{
-					/* PUT MISC */
-
+            /* PUT MISC */
 			item.x = x;
 			item.y = y;
 			item.parm[0] = RandomRange(0,4);			// note: #5 is free dude - they don't randomly appear!
@@ -512,7 +526,7 @@ static ObjectEntryType	item;
 		}
 		else
 		{
-				/* PUT WEAPON */
+            /* PUT WEAPON */
 			do
 			{
 				item.parm[0] = RandomRange(0,14);

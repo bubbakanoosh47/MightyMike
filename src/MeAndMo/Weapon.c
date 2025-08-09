@@ -32,6 +32,7 @@
 
 #define	SUCTIONCUP_POWER	1					// bullet does .. damage to enemy
 #define	CAKE_POWER			4					// grenade does .. damage to enemy
+#define HEALTH_POWER        10                  // sacrificing health does .. damage to enemy
 #define	OOZIE_POWER			1					// oozie does..
 #define	RBAND_POWER			1					// ricochet does..
 #define	TOOTHPASTE_POWER 	1					// toothpaste does..
@@ -73,7 +74,8 @@ static	Boolean(*gWeaponShootTable[])(void) =
 					ShootDoubleShot,
 					ShootTripleShot,
 					ShootFlamethrower,
-					ShootRocketGun
+					ShootRocketGun,
+                    ShootHealth
 				};
 
 static	short	gWeaponQuantities[] =
@@ -92,7 +94,8 @@ static	short	gWeaponQuantities[] =
 					40,					//DoubleShot
 					50,					//TripleShot
 					100,				//Flamethrower
-					20					//RocketGun
+					20,					//RocketGun
+                    1                   //Extra Health
 				};
 
 Byte	gBonusWeaponStartScenes[] =
@@ -111,7 +114,8 @@ Byte	gBonusWeaponStartScenes[] =
 					0,					//DoubleShot
 					2,					//TripleShot
 					SCENE_JURASSIC,		//Flamethrower
-					SCENE_CLOWN			//RocketGun
+					SCENE_CLOWN,		//RocketGun
+                    10                  //Extra Health (never randomly spawn)
 				};
 
 
@@ -215,9 +219,8 @@ Byte	i;
 	}
 
 				/* ADD ENTIRELY NEW ITEM */
-
-	gMyWeapons[gNumWeaponsIHave].type = weaponType;
-	gMyWeapons[gNumWeaponsIHave].life = gWeaponQuantities[weaponType];
+    gMyWeapons[gNumWeaponsIHave].type = weaponType;
+    gMyWeapons[gNumWeaponsIHave].life = gWeaponQuantities[weaponType];
 	i = gNumWeaponsIHave++;
 
 
@@ -226,6 +229,49 @@ exit:
 //		gCurrentWeaponType = gMyWeapons[i].type;
 //		if (refreshFlag)
 			ShowWeaponIcon();
+}
+
+/**************** GET THE HEALTH WEAPON *******************/
+//
+// Add health weapon into my inventory
+//
+
+void GetAHealthWeapon()
+{
+Byte    i;
+
+    PlaySound(SOUND_GETWEAPON);
+
+    if (!(MyRandomLong()&0b111))
+        MakeMikeMessage(MESSAGE_NUM_NICEGUY);
+
+    if (gNumWeaponsIHave >= MAX_WEAPONS)                            // see if can add anything
+        DoFatalAlert("Weapon inventory Overload!  Call Brian!");
+
+
+                /* SEE IF ADD TO LIFE */
+    
+    short healthWeaponType = 15;
+
+    for (i=0; i < gNumWeaponsIHave; i++)
+    {
+        if (gMyWeapons[i].type == healthWeaponType)
+        {
+            gMyWeapons[i].life += 1;        // add to quantity
+            if (gMyWeapons[i].life > MAX_WEAPON_AMMO)                                // check max
+                gMyWeapons[i].life = MAX_WEAPON_AMMO;
+            goto exit;
+        }
+    }
+
+                /* ADD ENTIRELY NEW ITEM */
+    gMyWeapons[gNumWeaponsIHave].type = healthWeaponType;
+    gMyWeapons[gNumWeaponsIHave].life = 1;
+    i = gNumWeaponsIHave++;
+
+
+exit:
+            ShowWeaponIcon();
 }
 
 
@@ -776,6 +822,119 @@ void MoveCake(void)
 
 	CalcObjectBox();
 	UpdateObject();
+}
+
+/*=========================== Health ===============================================*/
+
+#define    HEALTH_SPEED    0xD0000L
+
+const long        gHealthDeltasX[] = {0,HEALTH_SPEED,HEALTH_SPEED,HEALTH_SPEED,
+                            0,-HEALTH_SPEED,-HEALTH_SPEED,-HEALTH_SPEED};
+const long        gHealthDeltasY[] = {-HEALTH_SPEED,-HEALTH_SPEED,0,HEALTH_SPEED,
+    HEALTH_SPEED,HEALTH_SPEED,0,-HEALTH_SPEED};
+
+
+/**************** SHOOT Health ************************/
+
+Boolean ShootHealth(void)
+{
+ObjNode *newNode;
+long    dx,dy;
+short        z,y,x;
+
+
+                /* SEE IF READY TO SHOOT */
+
+    if (!GetNewNeedState(kNeed_Attack))                    // see if fire button pressed
+        return false;
+
+
+            /* SEE WHICH WAY TO MAKE IT GO */
+
+    dx = gHealthDeltasX[gMyDirection];
+    dy = gHealthDeltasY[gMyDirection];
+
+
+            /* CALC COORDINATES */
+
+    if (CalcWeaponStartCoords(dx,dy,&x,&y,&z,WS_THROW))    // calc start coord & see if in wall
+        return(false);
+
+            /* MAKE NEW OBJECT */
+    // TODO: change health based on current level
+    newNode = MakeNewShape(GroupNum_JurassicHealth,ObjType_JurassicHealth,0,x,y,z,MoveHealth,PLAYFIELD_RELATIVE);
+    if (newNode == nil)
+        return(false);
+    
+    
+    newNode->CBits = CBITS_TOUCHABLE;
+    
+    newNode->TopOff = -30;                            // set box
+    newNode->BottomOff = 0;
+    newNode->LeftOff = -14;
+    newNode->RightOff = 14;
+
+    newNode->DX = dx;
+    newNode->DY = dy;
+    newNode->WeaponPower = HEALTH_POWER;        // set weapon's power
+    gNumBullets++;
+
+           /* MAKE SHADOW */
+
+    newNode->ShadowIndex = MakeShadow(newNode,SHADOWSIZE_TINY);     // allocate shadow & remember ptr to it
+
+    InitYOffset(newNode, -30);
+    newNode->DZ = -0x80000L;                    // start bouncing up
+
+    PlaySound(SOUND_POP);
+    StartMyThrow();
+    return(true);
+}
+
+
+/*************** MOVE HEALTH ********************/
+//
+// gThisNodePtr = ptr to current node
+//
+
+void MoveHealth(void)
+{
+    if (gThisNodePtr->SubType == 1)                        // if exploding, then dont move
+        return;
+
+    GetObjectInfo();
+
+    gX.L += gDX;                                        // move it
+    gY.L += gDY;
+
+    if (TestCoordinateRange())                            // see if out of range
+    {
+        DeleteWeapon(gThisNodePtr);
+        return;
+    }
+
+                /* DO COLLISION DETECT */
+
+    if (!(GetMapTileAttribs(gX.Int,gY.Int)&TILE_ATTRIB_BULLETGOESTHRU))
+    {
+        DoPointCollision(gX.Int,gY.Int,CTYPE_BGROUND|CTYPE_MISC);
+    }
+
+                /* BOUNCE IT */
+
+    gThisNodePtr->DZ += 0x22000L;                                // add gravity
+    gThisNodePtr->YOffset.L += gThisNodePtr->DZ;                // move it
+    
+    if (gNumCollisions || gThisNodePtr->YOffset.Int > -1) {
+        gNumBullets--;                                        // dec count
+        gThisNodePtr->SubType = 1;
+        gThisNodePtr->CType = CTYPE_BONUS|CTYPE_HEALTH;
+        gThisNodePtr->CBits = CBITS_TOUCHABLE;
+        StopObjectMovement(gThisNodePtr);                        // prevent movement extrapolation
+    }
+
+    CalcObjectBox();
+    UpdateObject();
 }
 
 

@@ -148,7 +148,7 @@ int16_t offset;
 			if (gCollisionList[i].objectPtr->CType & CTYPE_MYBULLET)
 			{
 				WeaponHitEnemy(gCollisionList[i].objectPtr);				// tell weapon manager what happened
-				if (EnemyLoseHealth(gThisNodePtr,gCollisionList[i].objectPtr->WeaponPower))		// lose health & see if was killed
+				if (EnemyLoseHealth(gThisNodePtr,gCollisionList[i].objectPtr))		// lose health & see if was killed
 					return(true);
 			}
 			else
@@ -156,7 +156,7 @@ int16_t offset;
 
 			if (gCollisionList[i].objectPtr->CType & CTYPE_HURTENEMY)
 			{
-				if (EnemyLoseHealth(gThisNodePtr,10))					// lose health & see if was killed (pass arbitrary hurt power)
+				if (EnemyLoseHealth(gThisNodePtr,NULL))					// lose health & see if was killed (pass arbitrary hurt power)
 					return(true);
 			}
 		}
@@ -206,11 +206,56 @@ void CalcEnemyScatterOffset(ObjNode *node)
 // Return true if lost health caused death
 //
 
-Boolean EnemyLoseHealth(ObjNode *theEnemy, short amount)
+Boolean EnemyLoseHealth(ObjNode *theEnemy, ObjNode *weaponNode)
 {
+    short amount = 10;
+    if (weaponNode != NULL) {
+        amount = weaponNode->WeaponPower;
+    } else {
+        amount = 20;
+    }
 
 	if (gDifficultySetting != DIFFICULTY_EASY)		// no damage thresholds in easy mode
 	{
+        
+        // Change so that some enemies have vulnerabilities to weapon types
+        switch(weaponNode->Type)
+        {
+            case    ObjType_Toothpaste:
+                if (theEnemy->Type == ObjType_GBread ||
+                    theEnemy->Type == ObjType_RedGummy ||
+                    theEnemy->Type == ObjType_GumBall) {
+                    amount *= 2;
+                }
+                break;
+            case    ObjType_Cake:
+                if (theEnemy->Type == ObjType_GBread ||
+                    theEnemy->Type == ObjType_RedGummy ||
+                    theEnemy->Type == ObjType_GumBall) {
+                    amount = 0;
+                }
+                break;
+            case    ObjType_RBand:
+                if (theEnemy->Type == ObjType_Slinky ||
+                    theEnemy->Type == ObjType_Robot) {
+                    amount *= 2;
+                }
+                break;
+            case    ObjType_Pie:
+                if (theEnemy->Type == ObjType_Clown ||
+                    theEnemy->Type == ObjType_FlowerClown) {
+                    amount *= 2;
+                }
+                break;
+            case    ObjType_PixieDust:
+                if (theEnemy->Type == ObjType_Witch ||
+                    theEnemy->Type == ObjType_Dragon) {
+                    amount = 0;
+                }
+                break;
+        }
+        
+        
 		if (amount < theEnemy->InjuryThreshold)			// see if damage is at minimum threshold to do anything
 		{
 			PlaySound(SOUND_BADHIT);
@@ -256,10 +301,11 @@ register	short		x,y,z;
 	z = theEnemy->Z+1;
 	MakeCoins(x,y,z,theEnemy->Worth);							// make coins
 
-	theEnemy->ItemIndex = nil;									// never comin' back
+    if (gDifficultySetting == DIFFICULTY_EASY) {
+        theEnemy->ItemIndex = nil;                                    // never comin' back
+    }
+	
 	DeleteEnemy(theEnemy);										// delete the enemy
-
-
 	PutBonusPOW(x,y);											// try to make special POW
 
 				/* MAKE ENEMY SPLATTERS */

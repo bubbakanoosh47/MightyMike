@@ -294,6 +294,32 @@ void ShowWeaponIcon(void)
 	{
 		EraseWeaponIcon();
 	}
+    else if (gCurrentWeaponType == WEAPON_TYPE_EXTRAHEALTH) {
+        //TODO: change this so we can show a sprite from a different group?
+        EraseWeaponIcon();
+        
+        if (gGamePrefs.pfSize != PFSIZE_SMALL) {
+            // draw jurassic health
+            fprintf(stderr, "MIKE Group: %d\n", GroupNum_JurassicHealth);
+            fprintf(stderr, "MIKE Obj: %d\n", ObjType_JurassicHealth);
+//            DrawFrameToScreen(WEAPON_ICON_Xf + gInfobarXAdjust,
+//                              WEAPON_ICON_Yf + gInfobarYAdjust,
+//                                                 3, 4, 0);
+            
+            fprintf(stderr, "MIKE Group: %d\n", GroupNum_WeaponIcon);
+            fprintf(stderr, "MIKE Obj: %d\n", ObjType_WeaponIcon);
+            fprintf(stderr, "MIKE Frame: %d\n", WEAPON_TYPE_PIXIEDUST);
+            DrawFrameToScreen_NoMask(WEAPON_ICON_Xf + gInfobarXAdjust,
+                              WEAPON_ICON_Yf + gInfobarYAdjust,
+                              GroupNum_WeaponIcon, ObjType_WeaponIcon, 1);
+        } else
+            DrawFrameToScreen_NoMask(
+                    WEAPON_ICON_X + gInfobarXAdjust,
+                    WEAPON_ICON_Y + gInfobarYAdjust,
+                    GroupNum_WeaponIcon, ObjType_WeaponIcon, WEAPON_TYPE_PIXIEDUST);
+
+        ShowWeaponLife();
+    }
 	else
 	{
 		if (gGamePrefs.pfSize != PFSIZE_SMALL)
